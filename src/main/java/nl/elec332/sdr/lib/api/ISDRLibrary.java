@@ -1,39 +1,23 @@
 package nl.elec332.sdr.lib.api;
 
-import javax.annotation.Nullable;
-import java.util.Set;
+import nl.elec332.sdr.lib.api.datastream.IDataSource;
+import nl.elec332.sdr.lib.api.datastream.IPipeline;
+import nl.elec332.sdr.lib.api.source.IInputSource;
+import nl.elec332.sdr.lib.api.util.IDataConverterFactory;
 
 /**
- * Created by Elec332 on 29-3-2020
+ * Created by Elec332 on 5-4-2020
  */
 public interface ISDRLibrary {
 
-    <T> void addLibraryExtension(Class<T> extension, T defaultImpl);
+    IExtensionManager getExtensionManager();
 
-    <T> void registerLibraryImplementation(Class<T> extension, T impl, ImplementationType type);
+    IDataConverterFactory getCachedDataConverterFactory();
 
-    <T> boolean isExtensionRegistered(Class<T> extension);
+    IDataConverterFactory getDynamicDataConverterFactory();
 
-    <T> boolean hasImplementationType(Class<T> extension, ImplementationType type);
+    IPipeline createPipeline(IInputSource<?> source);
 
-    default <T> ImplementationType getBestImplementationType(Class<T> extension) {
-        ImplementationType[] types = ImplementationType.values();
-        for (int i = types.length - 1; i >= 0; i--) {
-            ImplementationType t = types[i];
-            if (hasImplementationType(extension, t)) {
-                return t;
-            }
-        }
-        throw new IllegalStateException("No (default) implementation found for: " + extension.getCanonicalName());
-    }
-
-    @Nullable
-    <T> T getImplementation(Class<T> extension, ImplementationType type);
-
-    <T> T getBestImplementation(Class<T> extension);
-
-    Set<Class<?>> getExtensionTypes();
-
-    boolean nativeImplementationsPresent();
+    IPipeline createPipeline(IDataSource source);
 
 }

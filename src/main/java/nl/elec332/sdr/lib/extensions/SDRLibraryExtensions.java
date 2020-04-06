@@ -53,10 +53,10 @@ public class SDRLibraryExtensions {
         protected static final boolean nativePresent;
 
         static {
-            UTIL_LIB = SDRLibrary.INSTANCE.getBestImplementation(ISDRUtilLibrary.class);
-            FFT_LIB = SDRLibrary.INSTANCE.getBestImplementation(IFFTLibrary.class);
-            FILTER_LIB = SDRLibrary.INSTANCE.getBestImplementation(IFilterLibrary.class);
-            nativePresent = SDRLibrary.INSTANCE.nativeImplementationsPresent();
+            UTIL_LIB = SDRLibrary.getInstance().getExtensionManager().getBestImplementation(ISDRUtilLibrary.class);
+            FFT_LIB = SDRLibrary.getInstance().getExtensionManager().getBestImplementation(IFFTLibrary.class);
+            FILTER_LIB = SDRLibrary.getInstance().getExtensionManager().getBestImplementation(IFilterLibrary.class);
+            nativePresent = SDRLibrary.getInstance().getExtensionManager().nativeImplementationsPresent();
         }
 
     }

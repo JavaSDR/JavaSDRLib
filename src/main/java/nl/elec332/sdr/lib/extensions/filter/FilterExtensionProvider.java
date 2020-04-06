@@ -1,7 +1,7 @@
 package nl.elec332.sdr.lib.extensions.filter;
 
+import nl.elec332.sdr.lib.api.IExtensionManager;
 import nl.elec332.sdr.lib.api.ISDRExtensionProvider;
-import nl.elec332.sdr.lib.api.ISDRLibrary;
 import nl.elec332.sdr.lib.api.ImplementationType;
 import nl.elec332.sdr.lib.api.extensions.IFilterLibrary;
 import org.bytedeco.javacpp.Loader;
@@ -12,12 +12,12 @@ import org.bytedeco.javacpp.Loader;
 public class FilterExtensionProvider implements ISDRExtensionProvider {
 
     @Override
-    public void registerExtensions(ISDRLibrary library) {
+    public void registerExtensions(IExtensionManager library) {
         library.addLibraryExtension(IFilterLibrary.class, new JavaFilterLibrary());
     }
 
     @Override
-    public void registerExtensionImplementations(ISDRLibrary library) {
+    public void registerExtensionImplementations(IExtensionManager library) {
         try {
             Loader.load(NativeFilterLibrary.class);
             library.registerLibraryImplementation(IFilterLibrary.class, new NativeFilterLibrary(), ImplementationType.NATIVE);
@@ -27,7 +27,7 @@ public class FilterExtensionProvider implements ISDRExtensionProvider {
     }
 
     @Override
-    public void afterRegister(ISDRLibrary library) {
+    public void afterRegister(IExtensionManager library) {
     }
 
 }

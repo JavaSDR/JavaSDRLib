@@ -16,7 +16,7 @@ public interface ISDRExtensionProvider {
      *
      * @param library The SDR Library
      */
-    void registerExtensions(ISDRLibrary library);
+    void registerExtensions(IExtensionManager library);
 
     /**
      * This method gets called after all extensions have been registered
@@ -24,7 +24,7 @@ public interface ISDRExtensionProvider {
      *
      * @param library The SDR Library
      */
-    void registerExtensionImplementations(ISDRLibrary library);
+    void registerExtensionImplementations(IExtensionManager library);
 
     /**
      * Gets called after all extensions and implementations have been registered
@@ -33,6 +33,6 @@ public interface ISDRExtensionProvider {
      *
      * @param library The SDR Library
      */
-    void afterRegister(ISDRLibrary library);
+    void afterRegister(IExtensionManager library);
 
 }

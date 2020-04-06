@@ -1,7 +1,7 @@
 package nl.elec332.sdr.lib.extensions.fft;
 
+import nl.elec332.sdr.lib.api.IExtensionManager;
 import nl.elec332.sdr.lib.api.ISDRExtensionProvider;
-import nl.elec332.sdr.lib.api.ISDRLibrary;
 import nl.elec332.sdr.lib.api.ImplementationType;
 import nl.elec332.sdr.lib.api.extensions.IFFTLibrary;
 import org.bytedeco.javacpp.Loader;
@@ -12,12 +12,12 @@ import org.bytedeco.javacpp.Loader;
 public class FFTExtensionProvider implements ISDRExtensionProvider {
 
     @Override
-    public void registerExtensions(ISDRLibrary library) {
+    public void registerExtensions(IExtensionManager library) {
         library.addLibraryExtension(IFFTLibrary.class, new JavaFFTLibrary());
     }
 
     @Override
-    public void registerExtensionImplementations(ISDRLibrary library) {
+    public void registerExtensionImplementations(IExtensionManager library) {
         try {
             Loader.load(org.bytedeco.fftw.global.fftw3.class);
             library.registerLibraryImplementation(IFFTLibrary.class, new NativeFFTLibrary(), ImplementationType.NATIVE_FAST);
@@ -27,7 +27,7 @@ public class FFTExtensionProvider implements ISDRExtensionProvider {
     }
 
     @Override
-    public void afterRegister(ISDRLibrary library) {
+    public void afterRegister(IExtensionManager library) {
     }
 
 }

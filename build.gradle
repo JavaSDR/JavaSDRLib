@@ -1,74 +1,47 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
-    }
-}
-
 plugins {
-    id 'java'
-//    id "com.github.johnrengelman.shadow" version "4.0.4"
-//    id "edu.sc.seis.launch4j" version "2.4.6"
+    id "nl.elec332.gradle.nativeplugin.javacpp" version "0.2.3-Beta"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
 }
-
-apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'nl.elec332.sdr.lib'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = targetCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-apply from: "cbase.gradle"
-
 dependencies {
-	compile fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
 
     compile "com.github.wendykierp:JTransforms:3.0"
     compile "com.google.guava:guava:21.0"
     compile "com.google.code.findbugs:jsr305:3.0.2"
 
-    javacpp "org.bytedeco:javacpp:1.4.3"
-
     compile "org.bytedeco:fftw-platform:3.3.8-1.5.2"
-//    compile "org.bytedeco:cuda:'10.2-7.6-1.5.2"
-//    compile "org.bytedeco:cuda-platform:10.2-7.6-1.5.2"
-//    compile "org.nd4j:nd4j-native-platform:1.0.0-beta4"
-//    compile "org.nd4j:nd4j-cuda-10.0-platform:1.0.0-beta4"
 }
 
 tasks.build.finalizedBy("shadowJar")
 
-model {
-    platforms {
-        windows_x86 {
-            operatingSystem "windows"
-            architecture "x86"
-        }
-        windows_x64 {
-            operatingSystem "windows"
-            architecture "x86_64"
-        }
-        linux_x86 {
-            operatingSystem "linux"
-            architecture "x86"
-        }
-        linux_x64 {
-            operatingSystem "linux"
-            architecture "x86_64"
-        }
+nativeProjects {
+
+    sdr_library {
+        platforms "windows_x64"
     }
+
+    filter_library {
+        platforms "windows_x64"
+    }
+
 }
 
-generateCPP {
-    generateCPPCode "nl.elec332.sdr.lib.extensions.util", "NativeSDRLibrary", "sdr_library", "windows_x64"
-    generateCPPCode "nl.elec332.sdr.lib.extensions.filter", "NativeFilterLibrary", "filter_library", "windows_x64"
+nativeInterfaces {
+
+    NativeSDRLibrary {
+        classPackage = "nl.elec332.sdr.lib.extensions.util"
+        projectDependency "sdr_library"
+        platforms "windows_x64"
+    }
+
+    NativeFilterLibrary {
+        classPackage = "nl.elec332.sdr.lib.extensions.filter"
+        projectDependency "filter_library"
+        platforms "windows_x64"
+    }
+
 }

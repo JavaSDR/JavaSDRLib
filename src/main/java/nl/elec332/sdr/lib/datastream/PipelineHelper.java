@@ -11,11 +11,11 @@ import nl.elec332.sdr.lib.datastream.input.InputSourceConverter;
  */
 public class PipelineHelper {
 
-    public static IPipeline startPipeline(IInputSource<?> source) {
-        return startPipeline(new InputSourceConverter<>(source));
+    public static IPipeline createPipeline(IInputSource<?> source) {
+        return createPipeline(new InputSourceConverter<>(source));
     }
 
-    public static IPipeline startPipeline(IDataSource source) {
+    public static IPipeline createPipeline(IDataSource source) {
         return new PipelineImpl(source);
     }
 

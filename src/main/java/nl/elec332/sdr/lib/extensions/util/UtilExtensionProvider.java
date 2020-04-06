@@ -1,7 +1,7 @@
 package nl.elec332.sdr.lib.extensions.util;
 
+import nl.elec332.sdr.lib.api.IExtensionManager;
 import nl.elec332.sdr.lib.api.ISDRExtensionProvider;
-import nl.elec332.sdr.lib.api.ISDRLibrary;
 import nl.elec332.sdr.lib.api.ImplementationType;
 import nl.elec332.sdr.lib.api.extensions.ISDRUtilLibrary;
 import org.bytedeco.javacpp.Loader;
@@ -12,12 +12,12 @@ import org.bytedeco.javacpp.Loader;
 public class UtilExtensionProvider implements ISDRExtensionProvider {
 
     @Override
-    public void registerExtensions(ISDRLibrary library) {
+    public void registerExtensions(IExtensionManager library) {
         library.addLibraryExtension(ISDRUtilLibrary.class, new JavaSDRLibrary());
     }
 
     @Override
-    public void registerExtensionImplementations(ISDRLibrary library) {
+    public void registerExtensionImplementations(IExtensionManager library) {
         try {
             Loader.load(NativeSDRLibrary.class);
             library.registerLibraryImplementation(ISDRUtilLibrary.class, new NativeSDRLibrary(), ImplementationType.NATIVE);
@@ -27,7 +27,7 @@ public class UtilExtensionProvider implements ISDRExtensionProvider {
     }
 
     @Override
-    public void afterRegister(ISDRLibrary library) {
+    public void afterRegister(IExtensionManager library) {
     }
 
 }

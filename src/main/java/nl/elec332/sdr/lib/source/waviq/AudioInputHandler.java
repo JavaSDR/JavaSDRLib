@@ -25,11 +25,13 @@ public class AudioInputHandler extends AbstractInputHandler<IQAudioSource, byte[
         this.sampPB = 1024 * 128;
         this.file = null;
         this.format = null;
+        this.waitSamples = true;
     }
 
     private static final FileNameExtensionFilter filter = new FileNameExtensionFilter("Audio file (*.wav)", "wav");
 
     private int sampPB;
+    private boolean waitSamples;
     private File file;
     private AudioFormat format;
 
@@ -93,8 +95,14 @@ public class AudioInputHandler extends AbstractInputHandler<IQAudioSource, byte[
                 res.setText(format.getSampleSizeInBits() + "");
             }
         });
-
+        JCheckBox wC = new JCheckBox("Real time", waitSamples);
+        wC.addActionListener(a -> {
+            this.waitSamples = wC.isSelected();
+            getCurrentDevice().ifPresent(s -> s.setWaitBetweenSamples(this.waitSamples));
+        });
         line3.add(chf);
+        line3.add(new JPanel());
+        line3.add(wC);
         listeners.add(chf);
         panel.add(line3, new LinedGridBagConstraints(4));
         return true;
@@ -114,7 +122,9 @@ public class AudioInputHandler extends AbstractInputHandler<IQAudioSource, byte[
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return new IQAudioSource(sound, sampPB);
+        IQAudioSource source = new IQAudioSource(sound, sampPB);
+        source.setWaitBetweenSamples(this.waitSamples);
+        return source;
     }
 
     @Override
