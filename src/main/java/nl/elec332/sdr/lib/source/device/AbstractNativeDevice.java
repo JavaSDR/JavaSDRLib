@@ -5,7 +5,7 @@ import nl.elec332.sdr.lib.api.source.IInputEventListener;
 import nl.elec332.sdr.lib.api.source.IInputSource;
 import org.bytedeco.javacpp.Pointer;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractNativeDevice<T> extends Pointer implements IInputSource<T> {
 
-    private List<IInputEventListener<IInputSource<T>>> lcb;
+    private Collection<IInputEventListener<IInputSource<T>>> lcb;
     private AtomicBoolean started, recStarted;
 
     protected void iterateListeners(Consumer<? super IInputEventListener<IInputSource<T>>> action) {

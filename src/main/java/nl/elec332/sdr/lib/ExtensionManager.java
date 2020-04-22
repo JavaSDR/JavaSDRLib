@@ -1,12 +1,10 @@
 package nl.elec332.sdr.lib;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.reflect.ClassPath;
 import nl.elec332.sdr.lib.api.IExtensionManager;
 import nl.elec332.sdr.lib.api.ISDRExtensionProvider;
-import nl.elec332.sdr.lib.api.ImplementationType;
+import nl.elec332.util.implementationmanager.api.ImplementationType;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -39,42 +37,12 @@ enum ExtensionManager implements IExtensionManager {
     private State state;
     private boolean nativePresent;
 
-    @SuppressWarnings("UnstableApiUsage")
     private void load_() {
         try {
-            providers.addAll(ClassPath.from(getClass().getClassLoader()).getAllClasses().stream()
-                    .filter(ci -> {
-                        String name = ci.getSimpleName();
-                        int e = 0;
-                        if (name.contains("SDR")) {
-                            e++;
-                        }
-                        if (name.contains("Provider")) {
-                            e++;
-                        }
-                        if (name.contains("Impl")) {
-                            e++;
-                        }
-                        if (name.contains("Extension")) {
-                            e++;
-                        }
-                        return e >= 2;
-                    }).map(ClassPath.ClassInfo::load)
-                    .filter(Objects::nonNull)
-                    .map(clazz -> {
-                        if (clazz == ISDRExtensionProvider.class) {
-                            return null;
-                        }
-                        try {
-                            return clazz.newInstance();
-                        } catch (Exception e) {
-                            System.out.println("Failed to load extension class: " + clazz.getSimpleName());
-                            return null;
-                        }
-                    })
-                    .filter(o -> o instanceof ISDRExtensionProvider)
-                    .map(o -> (ISDRExtensionProvider) o)
-                    .collect(Collectors.toSet()));
+            providers.addAll(ServiceLoader.load(ISDRExtensionProvider.class).stream()
+                    .map(ServiceLoader.Provider::get)
+                    .collect(Collectors.toList())
+            );
         } catch (Exception e) {
             throw new RuntimeException("Failed to load extension classes", e);
         }
@@ -107,7 +75,7 @@ enum ExtensionManager implements IExtensionManager {
             if (this.extensions.containsKey(ext)) {
                 throw new IllegalArgumentException();
             }
-            Map<ImplementationType, Object> map = Maps.newEnumMap(ImplementationType.class);
+            Map<ImplementationType, Object> map = new EnumMap<>(ImplementationType.class);
             map.put(ImplementationType.JAVA_DEFAULT, defaultImpl);
             this.extensions.put(ext, map);
         } else {
@@ -124,11 +92,11 @@ enum ExtensionManager implements IExtensionManager {
             if (!isExtensionRegistered(ext)) {
                 throw new IllegalArgumentException();
             }
-            Map<ImplementationType, Object> map = Preconditions.checkNotNull(this.extensions.get(ext));
+            Map<ImplementationType, Object> map = Objects.requireNonNull(this.extensions.get(ext));
             if (map.containsKey(type)) {
                 throw new IllegalArgumentException();
             }
-            map.put(type, Preconditions.checkNotNull(impl));
+            map.put(type, Objects.requireNonNull(impl));
             if (!this.nativePresent && type.isNative()) {
                 this.nativePresent = true;
             }
@@ -147,7 +115,7 @@ enum ExtensionManager implements IExtensionManager {
         if (!isExtensionRegistered(ext)) {
             return false;
         }
-        Map<ImplementationType, Object> m = Preconditions.checkNotNull(this.extensions.get(ext));
+        Map<ImplementationType, Object> m = Objects.requireNonNull(this.extensions.get(ext));
         return m.containsKey(type) && m.get(type) != null;
     }
 
@@ -159,7 +127,7 @@ enum ExtensionManager implements IExtensionManager {
             if (!hasImplementationType(ext, type)) {
                 return null;
             }
-            return (T) Preconditions.checkNotNull(this.extensions.get(ext)).get(type);
+            return (T) Objects.requireNonNull(this.extensions.get(ext)).get(type);
         } else {
             throw new IllegalStateException();
         }

@@ -13,12 +13,21 @@ import java.util.function.Supplier;
 public interface IInputHandler<T extends IInputSource<?>> extends Supplier<T> {
 
     /**
-     * returns the name of this device
+     * Returns the name of this device
      *
      * @return The name of this device
      */
     @Nonnull
     String getDisplayString();
+
+    /**
+     * Returns a unique identifier that can be used to
+     * easily identify this handler
+     *
+     * @return The identifier of this handler
+     */
+    @Nonnull
+    String getIdentifier();
 
     /**
      * Creates a new device with the info from the interface

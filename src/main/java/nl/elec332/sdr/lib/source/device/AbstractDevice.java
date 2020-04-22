@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import nl.elec332.sdr.lib.api.source.IInputEventListener;
 import nl.elec332.sdr.lib.api.source.IInputSource;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractDevice<T> implements IInputSource<T> {
 
-    private List<IInputEventListener<IInputSource<T>>> lcb;
+    private Collection<IInputEventListener<IInputSource<T>>> lcb;
     private AtomicBoolean active, recStarted;
 
     protected void iterateListeners(Consumer<? super IInputEventListener<IInputSource<T>>> action) {

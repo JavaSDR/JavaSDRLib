@@ -3,9 +3,7 @@ package nl.elec332.sdr.lib.api;
 /**
  * Created by Elec332 on 29-3-2020
  * <p>
- * For classes implementing this to be automatically detected:
- * Make sure the class-name contains 2 or more of the following elements:
- * "SDR", "Provider", "Impl" and "Extension"
+ * A module has to provide this interface in its module-info file for it to be detected
  */
 public interface ISDRExtensionProvider {
 

@@ -12,6 +12,8 @@ public interface ISDRLibrary {
 
     IExtensionManager getExtensionManager();
 
+    ISourceManager getSourceManager();
+
     IDataConverterFactory getCachedDataConverterFactory();
 
     IDataConverterFactory getDynamicDataConverterFactory();

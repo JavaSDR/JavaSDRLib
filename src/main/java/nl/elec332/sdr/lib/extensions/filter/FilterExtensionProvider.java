@@ -2,8 +2,8 @@ package nl.elec332.sdr.lib.extensions.filter;
 
 import nl.elec332.sdr.lib.api.IExtensionManager;
 import nl.elec332.sdr.lib.api.ISDRExtensionProvider;
-import nl.elec332.sdr.lib.api.ImplementationType;
 import nl.elec332.sdr.lib.api.extensions.IFilterLibrary;
+import nl.elec332.util.implementationmanager.api.ImplementationType;
 import org.bytedeco.javacpp.Loader;
 
 /**
@@ -21,7 +21,7 @@ public class FilterExtensionProvider implements ISDRExtensionProvider {
         try {
             Loader.load(NativeFilterLibrary.class);
             library.registerLibraryImplementation(IFilterLibrary.class, new NativeFilterLibrary(), ImplementationType.NATIVE);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("Failed to load native Filter implementation.");
         }
     }

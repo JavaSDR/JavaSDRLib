@@ -1,4 +1,4 @@
-package nl.elec332.sdr.lib.source;
+package nl.elec332.sdr.lib.source.inputhandler;
 
 import nl.elec332.sdr.lib.api.source.IInputEventListener;
 import nl.elec332.sdr.lib.api.source.IInputHandler;

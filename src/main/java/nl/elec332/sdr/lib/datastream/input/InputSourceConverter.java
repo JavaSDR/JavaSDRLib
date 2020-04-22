@@ -1,13 +1,17 @@
 package nl.elec332.sdr.lib.datastream.input;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
 import nl.elec332.sdr.lib.api.datastream.IDataSource;
 import nl.elec332.sdr.lib.api.datastream.ISampleDataSetter;
 import nl.elec332.sdr.lib.api.source.IInputEventListener;
 import nl.elec332.sdr.lib.api.source.IInputSource;
 import nl.elec332.sdr.lib.api.util.EndOfDataStreamException;
 
+import java.lang.ref.WeakReference;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
+import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,15 +25,33 @@ public class InputSourceConverter<T> implements IDataSource {
     public InputSourceConverter(IInputSource<T> source) {
         this.source = source;
         int len = source.getSampleRate() / source.getSamplesPerBuffer();
-        this.in = new ArrayBlockingQueue<>(len);
-        this.out = new ArrayBlockingQueue<>(len);
+        this.in = Queues.newArrayBlockingQueue(len);
+        this.out = Queues.newArrayBlockingQueue(len);
         for (int i = 0; i < len; i++) {
             in.offer(source.createBuffer());
         }
+        this.listeners = Lists.newArrayList();
+        addSource(source, new WeakReference<>(this));
         start();
     }
 
+    // Must be separate static method to prevent GC issues
+    private static <T> void addSource(IInputSource<T> source, final WeakReference<InputSourceConverter<T>> ref) {
+        source.addListener(new IInputEventListener<IInputSource<T>>() {
+
+            @Override
+            public void onRxStopped(IInputSource<T> device) {
+                InputSourceConverter<T> t = ref.get();
+                if (t != null) {
+                    t.listeners.forEach(Runnable::run);
+                }
+            }
+
+        });
+    }
+
     private final IInputSource<T> source;
+    private final Collection<Runnable> listeners;
 
     private final ReentrantLock lock = new ReentrantLock(true);
     private final AtomicBoolean START = new AtomicBoolean(false);
@@ -125,14 +147,7 @@ public class InputSourceConverter<T> implements IDataSource {
 
     @Override
     public void addStopListener(Runnable listener) {
-        source.addListener(new IInputEventListener<IInputSource<T>>() {
-
-            @Override
-            public void onRxStopped(IInputSource<T> device) {
-                listener.run();
-            }
-
-        });
+        this.listeners.add(listener);
     }
 
 }

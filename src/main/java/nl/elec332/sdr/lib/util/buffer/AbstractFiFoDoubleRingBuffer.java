@@ -103,11 +103,14 @@ public abstract class AbstractFiFoDoubleRingBuffer<BUF> implements IFiFoDoubleBu
 
     @Override
     public IPipeline createOutput(final Predicate<IFiFoDoubleBuffer> validator, final IntSupplier samples, final int maxSamplez, final int sampleRate) {
-        return PipelineHelper.startPipeline(new AbstractDataSource() {
+        return PipelineHelper.createPipeline(new AbstractDataSource() {
 
             @Override
             public void readData(ISampleDataSetter dataSetter) {
                 lock.waitForCondition2(() -> {
+                    if (isStopped()) {
+                        return true;
+                    }
                     if (!validator.test(AbstractFiFoDoubleRingBuffer.this)) {
                         return false;
                     }
@@ -117,6 +120,9 @@ public abstract class AbstractFiFoDoubleRingBuffer<BUF> implements IFiFoDoubleBu
                     }
                     return size_() >= samp;
                 });
+                if (isStopped()) {
+                    return;
+                }
                 int samplez = samples.getAsInt();
                 if (samplez > maxSamplez) {
                     throw new IllegalArgumentException();

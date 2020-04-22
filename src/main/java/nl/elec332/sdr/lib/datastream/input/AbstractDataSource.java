@@ -15,10 +15,16 @@ public abstract class AbstractDataSource implements IDataSource {
     }
 
     private final List<Runnable> listeners;
+    private boolean stopped;
+
+    public final boolean isStopped() {
+        return stopped;
+    }
 
     @Override
     public void stop() {
         listeners.forEach(Runnable::run);
+        this.stopped = true;
     }
 
     @Override

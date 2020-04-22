@@ -1,5 +1,7 @@
 package nl.elec332.sdr.lib.api;
 
+import nl.elec332.util.implementationmanager.api.ImplementationType;
+
 import javax.annotation.Nullable;
 import java.util.Set;
 

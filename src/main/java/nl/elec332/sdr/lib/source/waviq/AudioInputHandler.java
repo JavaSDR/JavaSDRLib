@@ -4,7 +4,7 @@ import nl.elec332.lib.java.swing.FileChooserHelper;
 import nl.elec332.lib.java.swing.LinedGridBagConstraints;
 import nl.elec332.sdr.lib.api.util.FailedToOpenDeviceException;
 import nl.elec332.sdr.lib.api.util.ISoundInput;
-import nl.elec332.sdr.lib.source.AbstractInputHandler;
+import nl.elec332.sdr.lib.source.inputhandler.AbstractInputHandler;
 import nl.elec332.sdr.lib.util.audio.FileAudioSource;
 
 import javax.annotation.Nonnull;
@@ -39,6 +39,12 @@ public class AudioInputHandler extends AbstractInputHandler<IQAudioSource, byte[
     @Override
     public String getDisplayString() {
         return "IQ Sample File (.wav)";
+    }
+
+    @Nonnull
+    @Override
+    public String getIdentifier() {
+        return "audio-wav-iq";
     }
 
     @Override

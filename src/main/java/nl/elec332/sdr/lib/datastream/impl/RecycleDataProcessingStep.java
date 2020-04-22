@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 /**
  * Created by Elec332 on 9-2-2020
  */
-public class RecycleDataProcessingStep implements IDataProcessingStep {
+class RecycleDataProcessingStep implements IDataProcessingStep {
 
-    public RecycleDataProcessingStep(Consumer<ISampleData> modifier) {
+    RecycleDataProcessingStep(Consumer<ISampleData> modifier) {
         this.modifier = modifier;
     }
 

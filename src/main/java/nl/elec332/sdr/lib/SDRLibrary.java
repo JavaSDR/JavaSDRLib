@@ -2,6 +2,7 @@ package nl.elec332.sdr.lib;
 
 import nl.elec332.sdr.lib.api.IExtensionManager;
 import nl.elec332.sdr.lib.api.ISDRLibrary;
+import nl.elec332.sdr.lib.api.ISourceManager;
 import nl.elec332.sdr.lib.api.SDRLibraryAPI;
 import nl.elec332.sdr.lib.api.datastream.IDataSource;
 import nl.elec332.sdr.lib.api.datastream.IPipeline;
@@ -36,12 +37,18 @@ public class SDRLibrary implements ISDRLibrary {
         if (instance == null) {
             instance = new SDRLibrary();
             ExtensionManager.load();
+            SourceManager.load();
         }
     }
 
     @Override
     public IExtensionManager getExtensionManager() {
         return ExtensionManager.INSTANCE;
+    }
+
+    @Override
+    public ISourceManager getSourceManager() {
+        return SourceManager.INSTANCE;
     }
 
     @Override

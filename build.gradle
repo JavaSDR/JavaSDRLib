@@ -1,22 +1,32 @@
 plugins {
-    id "nl.elec332.gradle.nativeplugin.javacpp" version "0.2.3-Beta"
+    id "nl.elec332.gradle.nativeplugin.javacpp" version "0.3-Beta"
+    id "nl.elec332.gradle.ossrhplugin" version "1.0.2-Beta"
     id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "com.dua3.gradle.jpms" version "1.0"
 }
 
-group 'nl.elec332.sdr.lib'
-version '1.0-SNAPSHOT'
+repositories {
+    mavenCentral()
+}
+
+group 'nl.elec332.sdr'
+archivesBaseName = "SDRLib"
+version '0.2-Beta'
+
+sourceCompatibility = targetCompatibility = 1.11
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
+    compile "org.bytedeco:fftw:3.3.8-1.5.2"
+    compile "nl.elec332.lib:eleclib:0.4-Alpha"
+    compile "nl.elec332.util:implementationmanager:1.0.2-Beta"
 
-    compile "com.github.wendykierp:JTransforms:3.0"
-    compile "com.google.guava:guava:21.0"
-    compile "com.google.code.findbugs:jsr305:3.0.2"
+    compileOnly fileTree(dir: 'libs', include: '*.jar')
+    compileOnly("com.github.wendykierp:JTransforms:3.1") {
+        exclude group: "pl.edu.icm"
+    }
 
-    compile "org.bytedeco:fftw-platform:3.3.8-1.5.2"
+    runtimeOnly "org.bytedeco:fftw-platform:3.3.8-1.5.2"
 }
-
-tasks.build.finalizedBy("shadowJar")
 
 nativeProjects {
 
@@ -44,4 +54,26 @@ nativeInterfaces {
         platforms "windows_x64"
     }
 
+}
+
+shadowJar {
+    setConfigurations Arrays.asList(project.configurations.compileOnly)
+    minimize()
+    archiveClassifier = ""
+}
+
+tasks.jar.dependsOn(shadowJar)
+tasks.jar.enabled = false
+
+ossrh {
+    description = 'General-purpose SDR library for Java'
+    githubUrl = 'https://github.com/JavaSDR/JavaSDRLib'
+
+    license {
+        name 'GNU Lesser General Public License, version 2.1'
+        url 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt'
+    }
+    developer {
+        name 'Elec332'
+    }
 }

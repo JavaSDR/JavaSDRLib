@@ -36,6 +36,11 @@ public class SDRLibraryAPI {
             }
 
             @Override
+            public ISourceManager getSourceManager() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public IDataConverterFactory getCachedDataConverterFactory() {
                 throw new UnsupportedOperationException();
             }

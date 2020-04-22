@@ -1,7 +1,6 @@
 package nl.elec332.sdr.lib.ui;
 
-import com.google.common.base.Preconditions;
-
+import java.util.Objects;
 import java.util.function.DoubleFunction;
 
 /**
@@ -26,7 +25,7 @@ public class SimpleLinePlot extends AbstractLinePlot {
     }
 
     public void setData(double[] data) {
-        this.data = Preconditions.checkNotNull(data);
+        this.data = Objects.requireNonNull(data);
     }
 
     @Override

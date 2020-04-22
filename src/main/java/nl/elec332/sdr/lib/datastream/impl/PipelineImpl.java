@@ -1,6 +1,5 @@
 package nl.elec332.sdr.lib.datastream.impl;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import nl.elec332.sdr.lib.api.datastream.IDataProcessingStep;
@@ -10,6 +9,7 @@ import nl.elec332.sdr.lib.api.datastream.ISampleData;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -224,13 +224,20 @@ public class PipelineImpl implements IPipeline {
     }
 
     private void onStopped() {
+        if (started == null) {
+            return;
+        }
         startStopLock.lock();
         children.forEach(p -> {
             if (p.isRunning()) {
                 p.stop();
             }
         });
+        Runnable ref = started;
         started = null;
+        if (ref != null) {
+            ref.run();
+        }
         if (this.sourceStopped) {
             this.sourceStopped = false;
         } else {
@@ -245,9 +252,9 @@ public class PipelineImpl implements IPipeline {
         if (end) {
             throw new IllegalStateException();
         }
-        Preconditions.checkNotNull(func);
+        Objects.requireNonNull(func);
         T ret = func.apply(this);
-        return Preconditions.checkNotNull(ret);
+        return Objects.requireNonNull(ret);
     }
 
 }
